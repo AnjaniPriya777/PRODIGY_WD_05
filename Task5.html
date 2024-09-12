@@ -119,14 +119,14 @@
         const API_KEY = "c36ff73e56e07b94ce20a9e0359a8d21";
 
         const displayWeather = (cityName, weatherDetails) => {
-          weatherDataDiv.innerHTML = 
+          weatherDataDiv.innerHTML = `
             <h2>${cityName}</h2>
             <h6>${weatherDetails.weather[0].description}</h6>
             <img src="https://openweathermap.org/img/wn/${weatherDetails.weather[0].icon}@4x.png" alt="weather-icon">
             <h6 class="temp">${(weatherDetails.main.temp - 273.15).toFixed(2)}°C</h6>
             <h6>Wind: ${weatherDetails.wind.speed} M/S</h6>
             <h6>Humidity: ${weatherDetails.main.humidity}%</h6>
-          ;
+          `;
           weatherDataDiv.style.display = "block";
         };
 

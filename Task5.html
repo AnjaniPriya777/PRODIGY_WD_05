@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="season.png" type="image/x-icon">
+    <title>Weather</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Open Sans', sans-serif;
+      }
+      body {
+        background: linear-gradient(135deg, #FF9A9E, #FAD0C4 50%, #FBC2EB);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        background: #ff758c;
+        font-size: 2rem;
+        text-align: center;
+        padding: 20px 0;
+        border-radius: 10px;
+        color: #fff;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        width: 400px;
+      }
+      .weather-input {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .weather-input input {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #d9d9d9;
+        transition: 0.2s ease;
+      }
+      .weather-input input:focus {
+        border: 2px solid #ff758c;
+        outline: none;
+      }
+      .weather-input button {
+        width: 100%;
+        padding: 14px;
+        cursor: pointer;
+        outline: none;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-top: 10px;
+        color: #fff;
+        background: #ff758c;
+        transition: 0.2s ease;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+      }
+      .weather-input .search-btn:hover {
+        background: #ff4b63;
+      }
+      .weather-input .location-btn {
+        background: #6c757d;
+      }
+      .weather-input .location-btn:hover {
+        background: #5a6268;
+      }
+      .weather-data {
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        background: #ff758c;
+        border-radius: 10px;
+        padding: 20px;
+        display: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .weather-data h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .weather-data img {
+        max-width: 120px;
+        margin-top: -15px;
+      }
+      .weather-data h6 {
+        margin-top: -10px;
+        text-transform: capitalize;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+      .weather-data .temp {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+    </style>
+    <script defer>
+      document.addEventListener("DOMContentLoaded", function() {
+        const cityInput = document.querySelector(".city-input");
+        const searchButton = document.querySelector(".search-btn");
+        const locationButton = document.querySelector(".location-btn");
+        const weatherDataDiv = document.querySelector(".weather-data");
+
+        const API_KEY = "c36ff73e56e07b94ce20a9e0359a8d21";
+
+        const displayWeather = (cityName, weatherDetails) => {
+          weatherDataDiv.innerHTML = 
+            <h2>${cityName}</h2>
+            <h6>${weatherDetails.weather[0].description}</h6>
+            <img src="https://openweathermap.org/img/wn/${weatherDetails.weather[0].icon}@4x.png" alt="weather-icon">
+            <h6 class="temp">${(weatherDetails.main.temp - 273.15).toFixed(2)}°C</h6>
+            <h6>Wind: ${weatherDetails.wind.speed} M/S</h6>
+            <h6>Humidity: ${weatherDetails.main.humidity}%</h6>
+          ;
+          weatherDataDiv.style.display = "block";
+        };
+
+        const getCityWeather = () => {
+          const cityName = cityInput.value.trim();
+          if (cityName === "") return;
+          const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}`;
+
+          fetch(API_URL)
+            .then(response => response.json())
+            .then(data => displayWeather(data.name, data))
+            .catch(() => {
+              alert("An error occurred while fetching the weather details!");
+            });
+        };
+
+        searchButton.addEventListener("click", getCityWeather);
+
+        locationButton.addEventListener("click", () => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const { latitude, longitude } = position.coords;
+              const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
+
+              fetch(API_URL)
+                .then(response => response.json())
+                .then(data => displayWeather(data.name, data))
+                .catch(() => {
+                  alert("An error occurred while fetching the weather details!");
+                });
+            });
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Weather</h1>
+    <div class="container">
+      <div class="weather-input">
+        <input type="text" placeholder="Enter City Name" class="city-input">
+        <button type="button" class="search-btn">Search</button>
+        <button type="button" class="location-btn">Get Device Location</button>
+      </div>
+      <div class="weather-data"></div>
+    </div>
+  </body>
+</html>
